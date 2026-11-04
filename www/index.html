@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Novembre avec Chloé</title>
+<style>
+@font-face{font-family:"Young Serif";src:url(fonts/young-serif-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Figtree";src:url(fonts/figtree-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Figtree";src:url(fonts/figtree-latin-500-normal.woff2) format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:"Figtree";src:url(fonts/figtree-latin-600-normal.woff2) format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:"Figtree";src:url(fonts/figtree-latin-700-normal.woff2) format("woff2");font-weight:700;font-display:swap}
+*,*::before,*::after{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);-webkit-text-size-adjust:100%}
+body{margin:0;-webkit-tap-highlight-color:transparent}
+img{max-width:100%}
+</style>
+</head>
+<body>
+
+<style>
+/* Two spaces: Chloé sees only today (programme + card draw). Joh's space has 3 tabs: Programme (days), Idées (card deck), À faire (bookings). */
+:root{
+  --bg:#eef2f3; --surface:#ffffff; --fg:#1d2b33; --muted:#5d6f78; --line:#d5dfe3;
+  --sea:#1f5f7a; --sea-soft:#dcebf1; --sun:#b97d0c; --sun-soft:#fbefd2; --rain:#4f6a84; --rain-soft:#e2e9f0;
+  --ok:#2f7d4f; --ok-soft:#dcefe3;
+  --display:"Young Serif", Georgia, serif; --body:"Figtree", system-ui, sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#10181d; --surface:#18232a; --fg:#e6eef1; --muted:#97a9b2; --line:#2a3a43;
+  --sea:#6cb6d4; --sea-soft:#17323e; --sun:#e8b44a; --sun-soft:#3a2e14; --rain:#9cb4cb; --rain-soft:#212e3a;
+  --ok:#6cc690; --ok-soft:#173326; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10181d; --surface:#18232a; --fg:#e6eef1; --muted:#97a9b2; --line:#2a3a43;
+  --sea:#6cb6d4; --sea-soft:#17323e; --sun:#e8b44a; --sun-soft:#3a2e14; --rain:#9cb4cb; --rain-soft:#212e3a;
+  --ok:#6cc690; --ok-soft:#173326; color-scheme:dark}
+[hidden]{display:none!important}
+.pinbox{position:fixed;inset:0;z-index:50;background:color-mix(in srgb,var(--bg) 92%,transparent);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-left,0px))}
+.pinbox .panel{width:min(340px,100%)}
+#pin{font-size:1.6rem;letter-spacing:.4em;text-align:center}
+.pinerr{margin:0;color:var(--sun);font-weight:600}
+.libre{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.45}
+.wrap{max-width:760px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.view{display:flex;flex-direction:column;gap:18px}
+h1{font-family:var(--display);font-weight:400;font-size:2rem;line-height:1.1;margin:0;text-wrap:balance;color:var(--sea)}
+h2{font-family:var(--display);font-weight:400;font-size:1.3rem;margin:0;text-wrap:balance}
+h3{font-size:1rem;margin:0;font-weight:700}
+.sub{color:var(--muted);margin:6px 0 0;max-width:62ch}
+.label{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.muted{color:var(--muted)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.btn,.seg button,.tabs button{all:unset;box-sizing:border-box;cursor:pointer;font-weight:600;font-size:.88rem;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 14px}
+.btn.main{background:var(--sea);color:var(--surface);border-color:var(--sea)}
+.btn.small{padding:4px 10px;font-size:.8rem}
+.btn:focus-visible,.seg button:focus-visible,.tabs button:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{border-radius:99px;padding:6px 12px;font-size:.85rem}
+.seg button[aria-pressed="true"]{background:var(--sea);color:var(--surface);border-color:var(--sea)}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.tabs button{border:0;text-align:center;border-radius:9px;padding:9px 6px}
+.tabs button[aria-selected="true"]{background:var(--sea);color:var(--surface)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+select,input[type=text]{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-width:0;max-width:100%}
+.pill{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap;background:var(--bg);color:var(--muted)}
+.pill.sun{background:var(--sun-soft);color:var(--sun)}
+.pill.rain{background:var(--rain-soft);color:var(--rain)}
+.pill.any{background:var(--sea-soft);color:var(--sea)}
+.pill.free{background:var(--ok-soft);color:var(--ok)}
+.pill.full{background:var(--sea);color:var(--surface)}
+.pill.res{border:1px solid var(--sun);background:transparent;color:var(--sun)}
+.star{color:var(--sun)}
+
+/* Chloé */
+.table-head{text-align:center;display:flex;flex-direction:column;align-items:center}
+.table-head h1{font-size:2.5rem}
+.agenda{display:flex;flex-direction:column;gap:8px}
+.ag{padding:16px;border-radius:14px;background:var(--sun-soft);border:2px solid var(--sun);display:flex;flex-direction:column;gap:4px;text-align:center}
+.ag b{font-family:var(--display);font-weight:400;font-size:1.35rem;text-wrap:balance}
+.ag span{color:var(--muted)}
+.ag.bonus{background:var(--ok-soft);border-color:var(--ok)}
+.ag.bonus b{font-size:1.1rem}
+.filters{display:flex;flex-direction:column;gap:8px;align-items:center}
+.filters .seg{justify-content:center}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px}
+.card{all:unset;cursor:pointer;perspective:800px;aspect-ratio:2/3;display:block;max-width:100%}
+.card:focus-visible{outline:2px solid var(--sun);outline-offset:3px;border-radius:12px}
+.card .in{position:relative;display:block;width:100%;height:100%;transition:transform .6s ease;transform-style:preserve-3d}
+.card.flip .in{transform:rotateY(180deg)}
+.card:not(.flip):hover .in{transform:translateY(-4px)}
+.face{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;padding:8px;text-align:center;box-sizing:border-box}
+.back{background:repeating-linear-gradient(45deg,var(--sea) 0 8px,color-mix(in srgb,var(--sea) 82%,var(--surface)) 8px 16px);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--sea);color:var(--surface)}
+.back b{font-family:var(--display);font-weight:400;font-size:2rem;background:var(--sea);width:2.4rem;height:2.4rem;border-radius:50%;display:grid;place-items:center}
+.front{transform:rotateY(180deg);background:var(--sun-soft);border:2px solid var(--sun);color:var(--fg)}
+.front .fn{font-weight:700;font-size:.92rem;line-height:1.2;overflow-wrap:anywhere}
+.cards.full .card:not(.flip){opacity:.3;cursor:default}
+.cards.choosing .card:not(.flip){display:none}
+.card.pick .front{border-color:var(--ok);background:var(--ok-soft);box-shadow:0 0 0 3px var(--ok)}
+.card.pick .front::after{content:"✓";position:absolute;top:6px;right:8px;font-weight:700;color:var(--ok)}
+.card.out{opacity:.1;pointer-events:none;transform:scale(.92);transition:opacity .4s,transform .4s}
+.dmsg{margin:0;color:var(--muted);text-align:center}
+.res{display:flex;flex-direction:column;gap:8px}
+.res div{padding:10px 12px;border-radius:10px;background:var(--ok-soft);border:1px solid var(--ok)}
+.res span{color:var(--muted);font-size:.88rem}
+.sim{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:8px 12px;border-radius:10px;background:var(--rain-soft);color:var(--rain);font-weight:600;font-size:.88rem}
+.ghost{all:unset;cursor:pointer;align-self:center;color:var(--muted);opacity:.45;font-size:1.1rem;padding:6px 10px;border-radius:8px}
+.ghost:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+
+/* Joh: programme */
+.days{display:flex;flex-direction:column;gap:10px}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.day-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.day-head b{font-size:1.02rem;text-transform:capitalize}
+.fixeds{display:flex;flex-direction:column;gap:6px}
+.fx{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;padding:8px 10px;border-radius:10px;background:var(--sun-soft);border:1px solid var(--sun)}
+.fx .n{font-weight:700;min-width:0}
+.fx .d{grid-column:1/-1;font-size:.84rem;color:var(--muted)}
+.fx.cont{background:var(--bg);border-style:dashed}
+.x{all:unset;cursor:pointer;color:var(--muted);font-weight:700;padding:2px 8px;border-radius:6px}
+.x:focus-visible{outline:2px solid var(--sea)}
+.status{font-size:.9rem;font-weight:600;color:var(--sea)}
+.status.done{color:var(--ok)}
+.addrow{display:flex;gap:8px;flex-wrap:wrap}
+.addrow select{flex:1 1 220px}
+
+/* Joh: idées */
+.count{font-weight:700;color:var(--sea);font-variant-numeric:tabular-nums}
+.cat{display:flex;flex-direction:column;gap:8px}
+.cat-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.link{all:unset;cursor:pointer;font-size:.8rem;font-weight:600;color:var(--sea)}
+.link:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:8px}
+.it{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:22px 1fr;gap:2px 10px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface);min-width:0}
+.it:hover{border-color:var(--sea)}
+.it:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+.box{width:20px;height:20px;border-radius:6px;border:2px solid var(--line);display:grid;place-items:center;font-size:.8rem;font-weight:700;color:var(--surface);margin-top:1px;box-sizing:border-box}
+.it.on{border-color:var(--ok);background:var(--ok-soft)}
+.it.on .box{background:var(--ok);border-color:var(--ok)}
+.it.fixed{cursor:default}
+.it.fixed:hover{border-color:var(--line)}
+.it .n{font-weight:600;min-width:0}
+.it .d{grid-column:2;font-size:.84rem;color:var(--muted)}
+.tags{grid-column:2;display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.add{display:grid;grid-template-columns:1fr auto auto;gap:8px}
+@media (max-width:520px){.add{grid-template-columns:1fr 1fr}.add input{grid-column:1/-1}}
+
+/* Joh: à faire */
+.todo{display:flex;flex-direction:column;gap:8px}
+.task{display:grid;grid-template-columns:22px 1fr;gap:2px 10px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface);cursor:pointer}
+.task input{margin:3px 0 0;width:18px;height:18px;accent-color:var(--ok)}
+.task .w{font-size:.8rem;color:var(--muted);font-weight:600}
+.task.ok{opacity:.55}
+.task.ok .t{text-decoration:line-through}
+.tel{font-variant-numeric:tabular-nums;user-select:all;font-weight:700}
+@media (prefers-reduced-motion:reduce){.card .in{transition:none}}
+</style>
+
+<div class="pinbox" id="pinbox" hidden>
+  <form class="panel" id="pinform">
+    <h2>Espace Joh</h2>
+    <p class="muted" style="margin:0">Entre ton code pour continuer.</p>
+    <input id="pin" type="password" inputmode="numeric" autocomplete="off" maxlength="8" aria-label="Code" placeholder="••••">
+    <p class="pinerr" id="pinerr" hidden>Code incorrect.</p>
+    <div class="actions"><button class="btn main" type="submit">Entrer</button><button class="btn" type="button" id="pincancel">Annuler</button></div>
+  </form>
+</div>
+<div class="wrap">
+
+  <!-- ================= ESPACE CHLOÉ ================= -->
+  <div class="view" id="v-chloe">
+    <div class="sim" id="sim" hidden><span id="simtxt"></span><button type="button" class="btn small" id="simoff">Revenir à aujourd'hui</button></div>
+    <header class="table-head">
+      <div class="label" id="tdate">Novembre à deux</div>
+      <h1 id="ttitle">Tire 2 cartes</h1>
+      <p class="sub" id="tsub"></p>
+    </header>
+    <div class="agenda" id="agenda" hidden></div>
+    <div class="libre" id="libre" hidden>
+      <button type="button" class="btn main" id="libreYes">🃏 Tirer des cartes</button>
+      <button type="button" class="btn" id="libreNo">Pas aujourd'hui</button>
+    </div>
+    <div class="view" id="drawzone" hidden>
+      <div class="filters" id="filt">
+        <div class="seg" role="group" aria-label="Météo"><button type="button" data-wx="all">Toute météo</button><button type="button" data-wx="sun">Il fait beau</button><button type="button" data-wx="rain">Il pleut</button></div>
+        <div class="seg" role="group" aria-label="Moment"><button type="button" data-tm="all">Peu importe</button><button type="button" data-tm="jour">En journée</button><button type="button" data-tm="soir">Ce soir</button></div>
+      </div>
+      <div class="cards" id="cards"></div>
+      <p class="dmsg" id="dmsg"></p>
+      <div class="res" id="dres"></div>
+      <div class="actions" style="justify-content:center"><button class="btn main" id="confirm" type="button" hidden>C'est mon choix !</button><button class="btn" id="swap" type="button" hidden>🔄 Pas fan ? Repioche</button><button class="btn" id="undo" type="button" hidden>Changer d'avis</button></div>
+    </div>
+    <button type="button" class="ghost" id="toJoh" aria-label="Espace de Joh">⚙︎</button>
+  </div>
+
+  <!-- ================= ESPACE JOH ================= -->
+  <div class="view" id="v-joh" hidden>
+    <header>
+      <button type="button" class="btn small" id="backChloe" style="margin-bottom:10px">← Retour à l'appli de Chloé</button>
+      <div class="label">Espace Joh · surprise du 7 au 29 novembre</div>
+      <h1>Novembre avec Chloé</h1>
+      <p class="sub">Chloé ne voit que le jour même. Ici tu prépares tout : le programme jour par jour, les idées du jeu de cartes, et ce qu'il reste à réserver.</p>
+      <div class="actions" style="margin-top:10px">
+        <select id="simsel" aria-label="Jour à prévisualiser"></select>
+        <button type="button" class="btn main" id="simgo">Voir comme Chloé</button>
+      </div>
+    </header>
+
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" data-tab="prog" aria-selected="true">Programme</button>
+      <button type="button" role="tab" data-tab="idees" aria-selected="false">Idées</button>
+      <button type="button" role="tab" data-tab="todo" aria-selected="false">À faire</button>
+    </div>
+
+    <section id="t-prog" class="view">
+      <p class="muted" style="margin:0">Pour chaque jour : une sortie fixe (★), ou un tirage de cartes. Sans sortie fixe, Chloé tire 2 cartes ; avec une sortie fixe d'une demi-journée, elle en tire 1.</p>
+      <div class="days" id="days"></div>
+    </section>
+
+    <section id="t-idees" class="view" hidden>
+      <p class="muted" style="margin:0">Coche les idées qui peuvent sortir au tirage. <span class="count" id="count">0</span> cartes dans le jeu.</p>
+      <div class="seg" role="group" aria-label="Afficher"><button type="button" data-show="all">Toutes les idées</button><button type="button" data-show="on">Seulement le jeu</button></div>
+      <div id="cats" class="view"></div>
+      <div class="panel">
+        <h3>Ajouter ta propre idée</h3>
+        <form class="add" id="addf">
+          <input id="addn" type="text" placeholder="Ex : patinoire à Boulogne" aria-label="Nom de l'idée" required>
+          <select id="addw" aria-label="Météo"><option value="any">Peu importe</option><option value="sun">Beau temps</option><option value="rain">Pluie OK</option></select>
+          <select id="addt" aria-label="Moment"><option value="both">Jour ou soir</option><option value="jour">Journée</option><option value="soir">Soirée</option></select>
+          <button class="btn main" type="submit" style="grid-column:1/-1;justify-self:start">Ajouter au jeu</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="t-todo" class="view" hidden>
+      <p class="muted" style="margin:0">La liste se remplit toute seule avec les sorties fixes et ce que Chloé tire. Coche au fur et à mesure.</p>
+      <div class="todo" id="todo"></div>
+      <div class="panel">
+        <h3>Tout recommencer</h3>
+        <p class="muted" style="margin:0">Remet le programme par défaut, toutes les idées dans le jeu, et efface les tirages.</p>
+        <div class="actions"><button class="btn" id="reset" type="button">Tout réinitialiser</button><button class="btn main" id="resetYes" type="button" hidden>Oui, tout réinitialiser</button><button class="btn" id="resetNo" type="button" hidden>Annuler</button></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+/* ---------- Catalogue ---------- */
+const CATS=[["big","Les grandes sorties (à placer dans le programme)"],["nature","Mer et nature"],["ville","Villes et visites"],["resto","Restos et sorties du soir"],["fun","Activités"],["pluie","Quand il pleut"]];
+// w: sun|rain|any · t: jour|soir|both · z: zone · p: 0 gratuit/petit prix, 1 €, 2 €€ · full: journée complète · big: grande sortie à placer
+const A={
+ arrivee:{c:"big",big:1,slots:2,n:"Soirée d'arrivée",d:"Frites face à la mer, puis balade sur la digue et la plage de Berck à la nuit tombée.",cd:"Bienvenue ! Ce soir : frites face à la mer, puis balade sur la plage de Berck à la nuit tombée 🌊",w:"any",t:"soir",z:"berck",p:0},
+ c_caps:{c:"big",big:1,slots:2,n:"Journée Côte d'Opale nord",d:"Cap Blanc-Nez → pique-nique à Wissant → Cap Gris-Nez → gaufre à Wimereux → coucher de soleil.",cd:"Grande journée sur la Côte d'Opale : Cap Blanc-Nez, pique-nique à Wissant, Cap Gris-Nez, gaufre à Wimereux et coucher de soleil.",w:"sun",t:"jour",z:"caps",p:0,todo:"Préparer le pique-nique la veille. S'il pleut, échange avec un jour de cartes"},
+ nausicaa:{c:"big",big:1,slots:1,n:"Journée Nausicaá",d:"Boulogne, 50 min par l'A16. 4 à 5 h de visite.",cd:"Direction Nausicaá à Boulogne pour la journée : requins, raies manta et otaries.",w:"rain",t:"jour",z:"boulogne",p:2,todo:"Prendre les billets en ligne sur nausicaa.fr"},
+ piccolino:{c:"big",big:1,slots:1,n:"Piccolino en amoureux + Le Douglas",d:"Montreuil-sur-Mer. Dîner vers 19h30, puis un verre place du Général de Gaulle.",cd:"Ce soir : dîner en amoureux au Piccolino à Montreuil, puis un verre au Douglas.",w:"any",t:"soir",z:"montreuil",p:2,todo:"Réserver une table pour 2 au 03 21 05 83 74"},
+ resident:{c:"big",big:1,slots:1,n:"Ciné : Resident Evil",d:"Au CINOS de Berck, séance de 20h30 ou plus tard.",cd:"Ce soir, ciné au CINOS de Berck. Pop-corn obligatoire 🍿",w:"any",t:"soir",z:"berck",p:1,todo:"Vérifier sur cinos.fr que le film passe encore (le programme change le mercredi)"},
+ stvalery:{c:"big",big:1,slots:1,n:"Baie de Somme",d:"Saint-Valery (ruelles, quais), Parc du Marquenterre, coucher de soleil au Crotoy.",cd:"Saint-Valery, ses ruelles et ses quais, le Parc du Marquenterre, et le coucher de soleil au Crotoy.",w:"sun",t:"jour",z:"somme",p:1,todo:"Regarder la météo 2 jours avant"},
+ escapade:{c:"big",big:1,slots:1,span:1,n:"Nuit en amoureux + jacuzzi",n2:"Réveil en amoureux + Le Tréport",d:"L'Escale de Normandie à Saint-Martin-au-Bosc (dès 73 €). Le lendemain : grasse mat', jacuzzi, puis Le Tréport.",cd:"Ce soir, on dort dans une tiny house avec jacuzzi en Normandie. Prends ton maillot !",cd2:"Grasse mat', jacuzzi, puis Le Tréport et Mers-les-Bains sur le retour.",w:"any",t:"soir",z:"normandie",p:2,todo:"Réserver la nuit après la paie du 9 et demander si le jacuzzi est privatif"},
+ noelamiens:{c:"big",big:1,slots:2,n:"Marché de Noël d'Amiens",d:"Le plus grand du nord de la France (20 nov → 30 déc). Chalets l'après-midi, cathédrale illuminée le soir. 1h20 de route.",cd:"Direction le marché de Noël d'Amiens : chalets, vin chaud et cathédrale illuminée à la nuit tombée ✨",w:"any",t:"both",z:"amiens",p:1,from:20},
+
+ phoques:{c:"nature",n:"Phoques en baie d'Authie",d:"Depuis le nord de la plage de Berck, à marée basse.",w:"sun",t:"jour",z:"berck",p:0},
+ hourdel:{c:"nature",n:"Pointe du Hourdel + Cap Hornu",d:"Phoques et galets au bout de la baie de Somme.",w:"sun",t:"jour",z:"somme",p:0},
+ touquet:{c:"nature",n:"Balade au Touquet",d:"Front de mer, gaufre, tour en forêt.",w:"sun",t:"jour",z:"touquet",p:0},
+ hardelot:{c:"nature",n:"Château d'Hardelot + forêt",d:"Château et lac à Condette, puis plage d'Hardelot.",w:"sun",t:"jour",z:"boulogne",p:0},
+ wimereux:{c:"nature",n:"Wimereux",d:"Digue, villas colorées, chocolat chaud face à la mer.",w:"sun",t:"jour",z:"boulogne",p:0},
+ dunes:{c:"nature",n:"Dunes de Merlimont",d:"Grande balade dans les dunes, puis la plage.",w:"sun",t:"jour",z:"berck",p:0},
+ plage:{c:"nature",n:"Balade sur la plage de Berck",d:"Esplanade, plage, chocolat chaud en terrasse.",w:"any",t:"jour",z:"berck",p:0},
+ coucher:{c:"nature",n:"Coucher de soleil + vin chaud",d:"Thermos, plaid, dans les dunes vers 17h.",w:"sun",t:"soir",z:"berck",p:0},
+ petitdej:{c:"nature",n:"Petit-déj sur la plage",d:"Thermos de café, croissants et plaid, à Berck ou Merlimont.",w:"sun",t:"jour",z:"berck",p:0},
+ etoiles:{c:"nature",n:"Nuit étoilée dans les dunes",d:"Couverture et chocolat chaud, loin des lumières de la ville.",w:"sun",t:"soir",z:"berck",p:0},
+ cervolant:{c:"nature",n:"Cerf-volant sur la plage",d:"Berck est la capitale du cerf-volant : on en achète un et on se bat avec le vent.",w:"sun",t:"jour",z:"berck",p:0},
+ pecheapied:{c:"nature",n:"Pêche à pied en baie",d:"Bottes, seau, marée basse. Vérifier les zones autorisées et les marées.",w:"sun",t:"jour",z:"berck",p:0},
+ fortmahon:{c:"nature",n:"Fort-Mahon et la baie d'Authie",d:"Grande plage et dunes de l'autre côté de la baie.",w:"sun",t:"jour",z:"berck",p:0},
+ canche:{c:"nature",n:"Vallée de la Canche",d:"Route des villages jusqu'à Hesdin, pause dans un café.",w:"sun",t:"jour",z:"canche",p:0},
+ charvoile:{c:"nature",n:"Char à voile à Berck",d:"Initiation sur la plage, selon le vent.",w:"sun",t:"jour",z:"berck",p:2,res:"Réserver auprès d'un club de char à voile de Berck"},
+ cheval:{c:"nature",n:"Balade à cheval sur la plage",d:"Avec un centre équestre de Berck ou Merlimont.",w:"sun",t:"jour",z:"berck",p:2,res:"Réserver auprès d'un centre équestre"},
+
+ lille:{c:"ville",full:1,n:"Journée à Lille",d:"Vieux-Lille, gaufre chez Meert, shopping, welsh le soir. 1h45.",w:"any",t:"jour",z:"lille",p:2},
+ bruges:{c:"ville",full:1,n:"Journée à Bruges",d:"Canaux, chocolat, bières belges. 2h30 de route, départ tôt.",w:"any",t:"jour",z:"bruges",p:2},
+ arras:{c:"ville",full:1,n:"Journée à Arras",d:"Grand-Place, boves souterraines, beffroi, welsh dans un estaminet. 1h15.",w:"any",t:"jour",z:"arras",p:1},
+ etretat:{c:"ville",full:1,n:"Road trip Étretat",d:"Par la côte (Le Tréport, Dieppe), falaises et Aiguille. Environ 1h45.",w:"sun",t:"jour",z:"normandie",p:1},
+ dunkerque:{c:"ville",full:1,n:"Dunkerque et Malo-les-Bains",d:"La digue, la plage, gaufres. Environ 1h20.",w:"any",t:"jour",z:"dunkerque",p:1},
+ rouen:{c:"ville",full:1,n:"Journée à Rouen",d:"Vieille ville, Gros-Horloge, cathédrale, marché de Noël s'il est ouvert. Environ 2h.",w:"any",t:"jour",z:"rouen",p:2,from:21},
+ boulogne:{c:"ville",n:"Boulogne : vieille ville",d:"Remparts, beffroi, basilique.",w:"any",t:"jour",z:"boulogne",p:0},
+ montreuil:{c:"ville",n:"Montreuil-sur-Mer",d:"Remparts et citadelle.",w:"any",t:"jour",z:"montreuil",p:0},
+ abbeville:{c:"ville",n:"Abbeville",d:"La collégiale Saint-Vulfran et le centre, un après-midi tranquille.",w:"any",t:"jour",z:"abbeville",p:0},
+ louvrelens:{c:"ville",n:"Louvre-Lens",d:"La Galerie du temps est gratuite. Environ 1h30.",w:"rain",t:"jour",z:"lens",p:0},
+ coupole:{c:"ville",n:"La Coupole d'Helfaut",d:"Bunker de la Seconde Guerre mondiale et planétarium, près de Saint-Omer.",w:"rain",t:"jour",z:"stomer",p:2},
+ saintomer:{c:"ville",n:"Saint-Omer",d:"Cathédrale, jardin public et ruelles. 1h15.",w:"any",t:"jour",z:"stomer",p:0},
+ cathedrale:{c:"ville",n:"Cathédrale d'Amiens",d:"La plus grande cathédrale gothique de France.",w:"rain",t:"jour",z:"amiens",p:0},
+ marchetouquet:{c:"ville",n:"Marché du Touquet",d:"Le marché couvert un matin de marché, puis café.",w:"any",t:"jour",z:"touquet",p:0},
+ noelmer:{c:"ville",n:"Marché de Noël de la mer",d:"Sur le parvis de Nausicaá, les 28 et 29 novembre.",w:"any",t:"jour",z:"boulogne",p:0,from:28},
+ mareis:{c:"ville",n:"Maréis à Étaples",d:"Centre de découverte de la pêche, puis le port.",w:"rain",t:"jour",z:"touquet",p:1},
+ brocante:{c:"ville",n:"Brocante du dimanche",d:"Chiner un petit souvenir. Voir vide-greniers.org.",w:"any",t:"jour",z:"flex",p:0},
+ shooting:{c:"ville",n:"Shooting photo à deux",d:"Plage au coucher du soleil, villas de Mers-les-Bains ou ruelles de Montreuil.",w:"any",t:"jour",z:"flex",p:0},
+
+ moules:{c:"resto",n:"Moules-frites au resto",d:"Resto à choisir : Berck, Le Crotoy, Fort-Mahon ou Le Touquet.",cd:"Ce soir : moules-frites au resto 🦪",w:"any",t:"soir",z:"flex",p:1,todo:"Choisir le resto de moules-frites et réserver pour 2"},
+ oceane:{c:"resto",n:"Moules-frites à L'Océane",d:"Berck, Quai 23 : 5 recettes de moules. Soir lun, jeu, ven, sam (19h-20h30).",cd:"Ce soir : moules-frites à L'Océane, à Berck. Les moules à la crème épicées sont les plus réputées 🦪",w:"any",t:"soir",z:"berck",p:1,res:"Réserver au 03 21 09 00 42",todo:"Réserver une table pour 2 au 03 21 09 00 42 (service du soir de 19h à 20h30, arriver tôt)"},
+ nems:{c:"resto",recur:1,n:"Nems au marché",d:"Bonus récurrent : le samedi matin au marché couvert de Berck, quand on reste sur Berck ou qu'on part l'après-midi.",w:"any",t:"jour",z:"berck",p:0},
+ friterie:{c:"resto",n:"Frites à la friterie",d:"Une vraie barquette du Nord face à la mer.",w:"any",t:"both",z:"flex",p:0},
+ chinois:{c:"resto",n:"Chinois à volonté",d:"Lucky Wok à Abbeville : grand buffet, sushis, wok.",w:"any",t:"both",z:"abbeville",p:1},
+ asian:{c:"resto",n:"Asian Street Food (Berck)",d:"Petit resto familial très bien noté, peu de tables.",w:"any",t:"soir",z:"berck",p:1,res:"Réserver au 09 80 74 68 85"},
+ pizza:{c:"resto",n:"Pizzeria à Berck",d:"Angelo ou Le Pinocchio, rue de l'Impératrice.",w:"any",t:"soir",z:"berck",p:1},
+ sushi:{c:"resto",n:"Resto japonais",d:"À Abbeville ou Boulogne.",w:"any",t:"soir",z:"flex",p:1},
+ crotoy:{c:"resto",n:"Moules-frites au Crotoy",d:"Déjeuner face à la baie.",w:"any",t:"jour",z:"somme",p:1},
+ creperie:{c:"resto",n:"Crêperie",d:"Galettes et cidre, au Touquet ou à Montreuil.",w:"any",t:"both",z:"flex",p:1},
+ brunch:{c:"resto",n:"Brunch au Touquet",d:"Pour un dimanche matin.",w:"any",t:"jour",z:"touquet",p:1},
+ burger:{c:"resto",n:"Burger au Touquet",d:"Puis balade de nuit sur le front de mer.",w:"any",t:"soir",z:"touquet",p:1},
+ fruitsdemer:{c:"resto",n:"Plateau de fruits de mer",d:"À Boulogne ou au Crotoy.",w:"any",t:"both",z:"flex",p:2},
+ welsh:{c:"resto",n:"Welsh dans un estaminet",d:"Le plat ch'ti, à Arras ou Lille.",w:"any",t:"both",z:"lille",p:1},
+ poissons:{c:"resto",n:"Marché aux poissons de Boulogne",d:"Le matin sur le port, puis on cuisine ce qu'on a acheté.",w:"any",t:"jour",z:"boulogne",p:1},
+ salondethe:{c:"resto",n:"Salon de thé au Touquet",d:"Pâtisseries et chocolat chaud.",w:"rain",t:"jour",z:"touquet",p:1},
+ cocktails:{c:"resto",n:"Bar à cocktails au Touquet",d:"Apéro chic en centre-ville.",w:"any",t:"soir",z:"touquet",p:1},
+ gastro:{c:"resto",n:"Dîner chic au Touquet",d:"Un vrai resto gastronomique.",w:"any",t:"soir",z:"touquet",p:2,res:"Réserver quelques jours avant"},
+
+ karting:{c:"fun",n:"Karting à Berck",d:"Ducas Racing Kart, sans réservation, même sous la pluie.",w:"any",t:"jour",z:"berck",p:1},
+ laserout:{c:"fun",n:"Laser game en extérieur",d:"Outdoor Laser Game Opal à Rang-du-Fliers.",w:"sun",t:"jour",z:"berck",p:1,res:"Appeler le 06 62 20 97 07"},
+ bowling:{c:"fun",n:"Bowling + laser game",d:"Opal Bowling au Portel.",w:"rain",t:"both",z:"boulogne",p:1},
+ laserquest:{c:"fun",n:"Laser Quest Boulogne",d:"À Saint-Léonard, arriver en avance.",w:"rain",t:"both",z:"boulogne",p:1},
+ escape:{c:"fun",n:"Escape game",d:"À Berck ou au Touquet, à réserver la veille.",w:"rain",t:"both",z:"berck",p:2,res:"Réserver la veille"},
+ cine:{c:"fun",n:"Ciné, autre film",d:"Un film au choix au CINOS.",w:"any",t:"soir",z:"berck",p:1},
+ casino:{c:"fun",n:"Casino du Touquet",d:"Petit budget fixé à l'avance, puis un verre.",w:"any",t:"soir",z:"touquet",p:1},
+ spectacle:{c:"fun",n:"Spectacle au Familia Théâtre",d:"Le théâtre de Berck : regarder la programmation.",w:"any",t:"soir",z:"berck",p:1},
+ barjeux:{c:"fun",n:"Bar à jeux",d:"Jeux de société et bières, à Abbeville ou Boulogne.",w:"rain",t:"soir",z:"abbeville",p:1},
+ atelier:{c:"fun",n:"Atelier à deux",d:"Cuisine, pâtisserie, poterie ou bougies, vers Le Touquet ou Boulogne.",w:"rain",t:"jour",z:"flex",p:2,res:"Réserver l'atelier"},
+ losc:{c:"fun",n:"Match du LOSC à Lille",d:"Stade Pierre-Mauroy, selon le calendrier.",w:"any",t:"both",z:"lille",p:2,res:"Places sur le site du LOSC"},
+
+ musee:{c:"pluie",n:"Musée Opale Sud (Berck)",d:"Les peintres de l'École de Berck.",w:"rain",t:"jour",z:"berck",p:1},
+ museetouquet:{c:"pluie",n:"Musée du Touquet",d:"Peintres de la Côte d'Opale, petit et sympa.",w:"rain",t:"jour",z:"touquet",p:1},
+ shopping:{c:"pluie",n:"Shopping à Cité Europe",d:"Grand centre commercial près de Calais.",w:"rain",t:"jour",z:"calais",p:1},
+ jeux:{c:"pluie",n:"Soirée jeux de société",d:"Tranquille, à deux ou avec tes parents.",w:"rain",t:"soir",z:"flex",p:0},
+ crepes:{c:"pluie",n:"Crêpes maison",d:"Salées puis sucrées.",w:"rain",t:"soir",z:"flex",p:0}
+};
+const W={sun:["sun","Beau temps"],rain:["rain","Pluie OK"],any:["any","Peu importe"]};
+const T={jour:"Journée",soir:"Soirée",both:"Jour ou soir"};
+const P=["Gratuit / petit prix","€","€€"];
+const EAT=new Set(["moules","oceane","nems","chinois","asian","pizza","sushi","crotoy","creperie","brunch","burger","fruitsdemer","welsh","friterie","poissons","gastro","piccolino"]);
+
+/* ---------- Calendrier ---------- */
+const NEMSDAYS=[8,21,28]; // matins de marché libres (dim 8 place Wilquin, samedis au marché couvert)
+const DAYS=[7,8,11,20,21,22,27,28,29];
+const DEFMODE={7:"repos",8:"repos"}; // premier week-end : repos, juste les nems le dimanche
+const PAYDAY=9;
+const DEFPLAN={20:["resident"],11:["nausicaa","piccolino"],21:["stvalery"],27:["moules"],28:["noelamiens"]};
+function dayLabel(d){return new Date(2026,10,d).toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"})}
+function isWork(d){const w=new Date(2026,10,d).getDay();return w>=1&&w<=5&&d!==11}
+function todayN(){const n=new Date();return (n.getFullYear()===2026&&n.getMonth()===10)?n.getDate():(n<new Date(2026,10,1)?0:99)}
+function dayTag(d){return d===7?"Arrivée":d===11?"Férié":d===29?"Jour du départ":isWork(d)?"Soirée seulement":d<PAYDAY?"Petit budget":""}
+
+/* ---------- Zones ---------- */
+const NB={berck:["touquet","montreuil","somme","abbeville"],touquet:["berck","montreuil","boulogne","canche"],montreuil:["berck","touquet","canche"],canche:["montreuil","touquet"],somme:["berck","abbeville"],abbeville:["somme","berck"],boulogne:["touquet","caps","calais"],caps:["boulogne","calais"],calais:["caps","boulogne","stomer","dunkerque"],dunkerque:["calais"],stomer:["calais"],lille:["lens","arras"],lens:["lille","arras"],arras:["lens","lille"]};
+const HOME=["berck","touquet","montreuil"];
+const WORKZ=["berck","touquet","montreuil","abbeville","somme","canche","flex"];
+
+/* ---------- Stockage ---------- */
+const KEY="nov-chloe-v3";
+function load(k,d){try{const v=JSON.parse(localStorage.getItem(KEY+k));return v??d}catch(e){return d}}
+function loadOld(k){try{return JSON.parse(localStorage.getItem("nov-chloe-v2"+k))}catch(e){return null}}
+let deckSel=load("-deck",null),plan=load("-plan",null),hist=load("-hist",null),own=load("-own",null),todoOk=load("-todo",{});
+const NEWIDEAS=["petitdej","etoiles","shooting","brocante","etretat","dunkerque","rouen","abbeville","brunch","poissons","barjeux","atelier","museetouquet","dunes","touquet"];
+if(!Array.isArray(deckSel)){ // reprise de l'ancienne version
+  const old=loadOld("-sel");
+  deckSel=Array.isArray(old)&&old.length?old.filter(k=>(A[k]&&!A[k].big)||String(k).startsWith("own")):Object.keys(A).filter(k=>!A[k].big);
+  NEWIDEAS.forEach(k=>{if(!deckSel.includes(k))deckSel.push(k)});
+}
+if(!Array.isArray(own)){const o=loadOld("-own");own=Array.isArray(o)?o:[]}
+if(!plan||typeof plan!=="object")plan=JSON.parse(JSON.stringify(DEFPLAN));
+if(!Array.isArray(hist)){const h=loadOld("-hist");hist=Array.isArray(h)?h.filter(x=>x&&x.day&&Array.isArray(x.keys)&&DAYS.includes(x.day)).map(x=>({day:x.day,keys:x.keys})):[]}
+if(!todoOk||typeof todoOk!=="object")todoOk={};
+let mode=load("-mode",{}),libre=load("-libre",{});
+if(!mode||typeof mode!=="object")mode={};if(!libre||typeof libre!=="object")libre={};
+function modeOf(d){return mode[d]||DEFMODE[d]||"cartes"}
+if(!load("-plan2",false)){[].forEach(([d,k])=>{if(placedDay(k)==null){plan[d]=[...(plan[d]||[]),k];hist=hist.filter(h=>h.day!==d)}});try{localStorage.setItem(KEY+"-plan2","true")}catch(e){}}
+if(!load("-plan3",false)){if((plan[27]||[]).includes("oceane"))plan[27]=plan[27].map(k=>k==="oceane"?"moules":k);else if(placedDay("moules")==null){plan[27]=[...(plan[27]||[]),"moules"]}hist=hist.filter(h=>h.day!==27);try{localStorage.setItem(KEY+"-plan3","true")}catch(e){}}
+if(!load("-plan4",false)){for(const d in plan)plan[d]=(plan[d]||[]).filter(k=>k!=="nems");try{localStorage.setItem(KEY+"-plan4","true")}catch(e){}}
+if(!load("-plan5",false)){for(const d in plan)plan[d]=(plan[d]||[]).filter(k=>k!=="arrivee"&&k!=="resident");plan[7]=[...(plan[7]||[]),"resident"];hist=hist.filter(h=>h.day!==7&&h.day!==20);try{localStorage.setItem(KEY+"-plan5","true")}catch(e){}}
+if(!load("-plan6",false)){plan[8]=(plan[8]||[]).filter(k=>k!=="c_caps");hist=hist.filter(h=>h.day!==8);try{localStorage.setItem(KEY+"-plan6","true")}catch(e){}}
+if(!load("-plan7",false)){for(const d in plan)plan[d]=(plan[d]||[]).filter(k=>k!=="resident");delete plan[7];delete plan[8];if(!(plan[20]||[]).length)plan[20]=["resident"];hist=hist.filter(h=>h.day!==7&&h.day!==8);try{localStorage.setItem(KEY+"-plan7","true")}catch(e){}}
+if(!load("-plan8",false)){for(const d in plan)plan[d]=(plan[d]||[]).filter(k=>k!=="escapade");hist=hist.filter(h=>h.day!==21&&h.day!==22);try{localStorage.setItem(KEY+"-plan8","true")}catch(e){}}
+function save(){try{localStorage.setItem(KEY+"-mode",JSON.stringify(mode));localStorage.setItem(KEY+"-libre",JSON.stringify(libre));localStorage.setItem(KEY+"-deck",JSON.stringify(deckSel));localStorage.setItem(KEY+"-plan",JSON.stringify(plan));localStorage.setItem(KEY+"-hist",JSON.stringify(hist));localStorage.setItem(KEY+"-own",JSON.stringify(own));localStorage.setItem(KEY+"-todo",JSON.stringify(todoOk))}catch(e){}}
+save();
+
+/* ---------- Helpers ---------- */
+function esc(t){return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;")}
+function get(k){if(A[k])return A[k];const o=own.find(x=>x.id===k);return o?{c:"own",n:o.n,d:"Ton idée à toi",w:o.w,t:o.t,z:"flex",p:1}:null}
+function planned(d){return (plan[d]||[]).filter(get)}
+function carried(d){return planned(d-1).filter(k=>get(k).span)}
+function placedDay(k){for(const d in plan)if((plan[d]||[]).includes(k))return +d;return null}
+function used(d){return planned(d).reduce((n,k)=>n+(get(k).slots||(get(k).full?2:1)),0)+carried(d).length*2}
+function need(d){return DAYS.includes(d)&&modeOf(d)!=="repos"?Math.max(0,2-used(d)):0}
+function entryOn(d){return hist.find(h=>h.day===d)}
+function drawnKeys(){return hist.flatMap(h=>h.keys)}
+function cz(za,ta,zb,tb){if(za==="flex"||zb==="flex"||za===zb)return true;if((NB[za]||[]).includes(zb))return true;return (ta==="soir"&&HOME.includes(za))||(tb==="soir"&&HOME.includes(zb))}
+function compat(a,b,d){const A1=get(a),B1=get(b);if(A1.full||B1.full)return false;if(EAT.has(a)&&EAT.has(b))return false;
+  if(isWork(d))return A1.z==="flex"||B1.z==="flex"||A1.z===B1.z||(NB[A1.z]||[]).includes(B1.z);
+  return cz(A1.z,A1.t,B1.z,B1.t)}
+function mustName(k,d){const a=get(k);return a.span&&placedDay(k)===d-1?a.n2:a.n}
+function mustDesc(k,d){const a=get(k);return a.span&&placedDay(k)===d-1?a.cd2:(a.cd||a.d)}
+
+/* ---------- Tirage ---------- */
+let wx="all",tm="all",cur=null,dday=null,simDay=null;
+function deck(d){const fx=planned(d),n=need(d),work=isWork(d),gone=drawnKeys(),pl=Object.values(plan).flat();
+  return deckSel.filter(k=>{const a=get(k);if(!a||a.big||a.recur||gone.includes(k)||pl.includes(k))return false;
+    if(a.from&&d<a.from)return false;
+    if(d<PAYDAY&&a.p>0)return false;
+    if(work&&(a.t==="jour"||a.full||!WORKZ.includes(a.z)))return false;
+    if(a.full&&n<2)return false;
+    if(wx!=="all"&&a.w!==wx&&a.w!=="any")return false;
+    if(tm!=="all"&&a.t!==tm&&a.t!=="both")return false;
+    if(fx.some(m=>{const b=get(m);return (b.t!=="both"&&a.t===b.t&&EAT.has(k)===EAT.has(m))||(EAT.has(k)&&EAT.has(m))||!cz(a.z,a.t,b.z,b.t)}))return false;
+    return true})}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function cardHTML(k,flipped,i){const a=get(k);return `<button type="button" class="card ${flipped?"flip":""}" ${i!=null?`data-i="${i}"`:""} aria-label="${flipped?esc(a.n):"Carte face cachée"}"><span class="in"><span class="face back"><b>?</b></span><span class="face front">${a.full?'<span class="pill full">Journée complète</span>':`<span class="pill ${W[a.w][0]}">${W[a.w][1]}</span>`}<span class="fn">${esc(a.n)}</span></span></span></button>`}
+
+const $=id=>document.getElementById(id);
+const CARDS=$("cards"),MSG=$("dmsg"),RES=$("dres"),UN=$("undo");
+function renderChloe(){
+  dday=simDay!=null?simDay:todayN();
+  $("sim").hidden=simDay==null;$("simtxt").textContent=simDay!=null?"Aperçu : comme si on était le "+dayLabel(simDay):"";
+  const TD=$("tdate"),TT=$("ttitle"),TS=$("tsub"),AGD=$("agenda"),DZ=$("drawzone");
+  AGD.hidden=true;DZ.hidden=true;$("libre").hidden=true;UN.hidden=true;$("confirm").hidden=true;$("swap").hidden=true;RES.innerHTML="";MSG.textContent="";CARDS.innerHTML="";CARDS.classList.remove("full","choosing");
+  if(dday<7){TD.textContent="Novembre à deux";TT.textContent="Rendez-vous le 7 novembre";TS.textContent="Les cartes s'ouvriront ce jour-là. Patience 😉";return}
+  if(dday>29){TD.textContent="Novembre à deux";TT.textContent="C'était un super mois";TS.textContent="Merci d'être venue ❤";return}
+  TD.textContent="Aujourd'hui · "+dayLabel(dday);
+  const ms=[...carried(dday),...planned(dday)],e=entryOn(dday),n=need(dday),work=isWork(dday);
+  const bonus=NEMSDAYS.includes(dday)?(dday===8?`<div class="ag bonus"><b>🥢 Nems au marché</b><span>Ce matin, petit tour au marché de Berck, place Wilquin, pour prendre des nems.</span></div>`:`<div class="ag bonus"><b>🥢 Bonus du samedi matin</b><span>Petit tour au marché couvert de Berck pour prendre des nems avant de partir.</span></div>`):"";
+  if(ms.length||bonus){AGD.hidden=false;AGD.innerHTML=`<div class="label" style="text-align:center">Au programme</div>`+ms.map(k=>`<div class="ag"><b>${esc(mustName(k,dday))}</b><span>${esc(mustDesc(k,dday))}</span></div>`).join("")+bonus}
+  if(e){const ks=e.keys.filter(get);TT.textContent=ks.length>1?"Tes 2 cartes du jour":"Ta carte du jour";TS.textContent="C'est prévu, bonne sortie !";
+    DZ.hidden=false;$("filt").hidden=true;CARDS.innerHTML=ks.map(k=>cardHTML(k,true)).join("");
+    RES.innerHTML=ks.map(k=>{const a=get(k);return `<div><b>${esc(a.n)}</b><br><span>${esc(a.d)}</span></div>`}).join("");UN.hidden=false;return}
+  if(DAYS.includes(dday)&&modeOf(dday)==="repos"){TT.textContent=dday===7?"Bienvenue !":ms.length?"Au programme aujourd'hui":"Journée tranquille";TS.textContent=dday===7?"Ce week-end, on se pose. Les surprises commencent bientôt 😉":bonus&&!ms.length?"On se pose, juste un petit tour au marché pour les nems.":"Pas de cartes aujourd'hui, on se pose.";return}
+  if(n>0&&modeOf(dday)==="libre"&&libre[dday]!=="go"){
+    $("libre").hidden=false;
+    if(libre[dday]==="no"){TT.textContent="Journée tranquille";TS.textContent="Tu as choisi de te poser aujourd'hui. Tu peux toujours changer d'avis.";$("libreYes").textContent="Finalement, je tire des cartes";$("libreNo").hidden=true}
+    else{TT.textContent="Envie d'une sortie ?";TS.textContent=(ms.length?"En plus du programme, c'est":"Aujourd'hui, c'est")+" toi qui décides : des cartes, ou on se pose.";$("libreYes").textContent="🃏 Tirer des cartes";$("libreNo").hidden=false}
+    return}
+  if(n===0){
+    if(ms.length){TT.textContent="La journée est déjà prévue";TS.textContent="Pas de cartes aujourd'hui, profitez !"}
+    else{const nx=DAYS.find(d=>d>dday);TT.textContent="Pas de sortie aujourd'hui";TS.textContent=nx?`Prochain rendez-vous : ${dayLabel(nx)}.`:""}
+    return}
+  if(work&&tm==="jour")tm="all";
+  document.querySelectorAll("[data-wx]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.wx===wx)));
+  document.querySelectorAll("[data-tm]").forEach(b=>{b.setAttribute("aria-pressed",String(b.dataset.tm===tm));b.hidden=work&&b.dataset.tm==="jour"});
+  const d=deck(dday);
+  if(d.length<n&&ms.length&&wx==="all"&&tm==="all"){TT.textContent="La journée est déjà prévue";TS.textContent="Pas de cartes aujourd'hui, profitez !";cur=null;return}
+  const R=Math.min(n===2?4:3,d.length);
+  TT.textContent="Tire tes cartes";
+  TS.textContent=(dday<PAYDAY?"Petit budget : que des idées gratuites ou presque. ":ms.length?"En plus du programme. ":work?"Ce soir après le boulot. ":"")+(n===2?`Retourne ${R} cartes, puis choisis tes 2 préférées.`:`Retourne ${R} cartes, puis choisis celle qui te fait envie.`);
+  DZ.hidden=false;$("filt").hidden=false;
+  if(d.length<n){MSG.textContent="Aucune carte ne correspond. Essaie une autre météo ou un autre moment.";cur=null;return}
+  const sig=dday+wx+tm+d.join();
+  if(!cur||cur.sig!==sig){const sh=shuffle(d),H=Math.min(d.length,n===2?8:6);cur={sig,pool:sh,order:sh.slice(0,H),next:H,flip:[],pick:[],out:[],R}}
+  drawCards();
+}
+function chooseState(){const n=need(dday),pk=cur.pick.map(j=>cur.order[j]);
+  const full=pk.some(k=>get(k).full);
+  cur.out=[];
+  if(n===2&&pk.length===1&&!full){cur.flip.forEach(j=>{if(!cur.pick.includes(j)&&!compat(pk[0],cur.order[j],dday))cur.out.push(j)})}
+  const left=cur.flip.filter(j=>!cur.pick.includes(j)&&!cur.out.includes(j)).length;
+  const done=full||pk.length===n||(n===2&&pk.length===1&&left===0);
+  return {n,pk,full,done,left};
+}
+function drawCards(){
+  const choosing=cur.flip.length>=cur.R;
+  CARDS.classList.toggle("choosing",choosing);
+  const st=choosing?chooseState():null;
+  CARDS.innerHTML=cur.order.map((k,i)=>cardHTML(k,cur.flip.includes(i),i)).join("");
+  CARDS.querySelectorAll(".card[data-i]").forEach(el=>{const j=+el.dataset.i;if(cur.pick.includes(j))el.classList.add("pick");if(cur.out.includes(j))el.classList.add("out")});
+  const C=$("confirm");C.hidden=!(st&&st.done);
+  $("swap").hidden=!choosing||cur.next>=cur.pool.length||cur.flip.every(j=>cur.pick.includes(j));
+  if(!choosing){const r=cur.R-cur.flip.length;MSG.textContent=cur.flip.length?`Encore ${r} carte${r>1?"s":""} à retourner.`:`${cur.order.length} cartes face cachée. Retournes-en ${cur.R}.`;return}
+  if(st.done)MSG.textContent=st.full?"Journée complète, elle suffit à elle seule !":(st.pk.length<st.n?"Aucune autre carte ne va avec celle-là, elle suffira.":"Parfait ! Valide ton choix.");
+  else MSG.textContent=st.pk.length?"Choisis ta 2e carte parmi celles qui restent.":(st.n===2?"Touche les 2 cartes qui te font envie.":"Touche la carte qui te fait envie.");
+}
+CARDS.addEventListener("click",e=>{
+  const c=e.target.closest(".card[data-i]");if(!c||!cur||entryOn(dday)||c.classList.contains("out"))return;
+  const i=+c.dataset.i;
+  if(cur.flip.length<cur.R){if(cur.flip.includes(i))return;cur.flip.push(i);c.classList.add("flip");c.setAttribute("aria-label",get(cur.order[i]).n);
+    if(cur.flip.length>=cur.R)setTimeout(drawCards,650);else drawCards();return}
+  if(!cur.flip.includes(i))return;
+  const n=need(dday);
+  if(cur.pick.includes(i))cur.pick=cur.pick.filter(j=>j!==i);
+  else if(get(cur.order[i]).full)cur.pick=[i];
+  else{cur.pick=cur.pick.filter(j=>!get(cur.order[j]).full);if(cur.pick.length>=n)cur.pick=cur.pick.slice(1);cur.pick.push(i)}
+  drawCards();
+});
+$("swap").addEventListener("click",()=>{if(!cur)return;let changed=0;
+  cur.flip.forEach(j=>{if(cur.pick.includes(j))return;if(cur.next<cur.pool.length){cur.order[j]=cur.pool[cur.next++];changed++}});
+  cur.out=[];drawCards();MSG.textContent=changed?(cur.pick.length?"Nouvelles cartes ! Ta carte choisie est gardée.":"Nouvelles cartes ! Choisis celle qui te fait envie."):"Plus d'autres cartes dans le paquet.";});
+$("confirm").addEventListener("click",()=>{if(!cur)return;const got=cur.pick.map(j=>cur.order[j]);if(!got.length)return;hist.push({day:dday,keys:got});hist.sort((a,b)=>a.day-b.day);cur=null;$("confirm").hidden=true;save();render()});
+UN.addEventListener("click",()=>{hist=hist.filter(h=>h.day!==dday);cur=null;save();render()});
+$("libreYes").addEventListener("click",()=>{libre[dday]="go";cur=null;save();render()});
+$("libreNo").addEventListener("click",()=>{libre[dday]="no";save();render()});
+
+/* ---------- Espace Joh : Programme ---------- */
+function optionList(d){
+  const pl=Object.values(plan).flat();
+  const groups=CATS.map(([c,label])=>{const ks=Object.keys(A).filter(k=>A[k].c===c&&!pl.includes(k)&&!(A[k].from&&d<A[k].from));return ks.length?`<optgroup label="${esc(label)}">${ks.map(k=>`<option value="${k}">${esc(A[k].n)}</option>`).join("")}</optgroup>`:""}).join("");
+  const ownOpts=own.filter(o=>!pl.includes(o.id)).map(o=>`<option value="${o.id}">${esc(o.n)}</option>`).join("");
+  return `<option value="">+ Ajouter une sortie fixe…</option>${groups}${ownOpts?`<optgroup label="Tes idées">${ownOpts}</optgroup>`:""}`;
+}
+function renderProg(){
+  $("days").innerHTML=DAYS.map(d=>{
+    const tag=dayTag(d),cs=carried(d),ps=planned(d),e=entryOn(d),n=need(d);
+    let st;
+    if(e)st=`<span class="status done">🃏 Tiré : ${e.keys.filter(get).map(k=>esc(get(k).n)).join(" + ")}</span> <button type="button" class="btn small" data-undo="${d}">Annuler le tirage</button>`;
+    else st=modeOf(d)==="repos"?`<span class="status">😴 Repos</span>`:n===0?`<span class="status">Journée complète</span>`:modeOf(d)==="libre"?`<span class="status">🤷 Jour libre : jusqu'à ${n} carte${n>1?"s":""} si elle veut</span>`:`<span class="status">🃏 Chloé tire ${n} carte${n>1?"s":""}</span>`;
+    return `<div class="day"><div class="day-head"><b>${dayLabel(d)}</b>${tag?`<span class="pill${d<PAYDAY?" free":""}">${tag}</span>`:""}</div>
+      ${cs.length||ps.length?`<div class="fixeds">${cs.map(k=>`<div class="fx cont"><span class="n"><span class="star">★</span> ${esc(get(k).n2)}</span><span class="muted" style="font-size:.78rem">suite de la veille</span><span class="d">${esc(get(k).cd2)}</span></div>`).join("")}${ps.map(k=>`<div class="fx"><span class="n"><span class="star">★</span> ${esc(get(k).n)}</span><button type="button" class="x" data-rm="${d}|${k}" aria-label="Retirer ${esc(get(k).n)}">✕</button><span class="d">${esc(get(k).d)}</span></div>`).join("")}</div>`:""}
+      ${NEMSDAYS.includes(d)?`<div class="muted" style="font-size:.88rem">🥢 Bonus : nems au marché couvert le matin</div>`:""}
+      <div>${st}</div>
+      ${used(d)<2?`<div class="addrow"><select data-mode="${d}" aria-label="Type de journée le ${d}"><option value="cartes" ${modeOf(d)==="cartes"?"selected":""}>🃏 Cartes : elle tire</option><option value="libre" ${modeOf(d)==="libre"?"selected":""}>🤷 Jour libre : elle décide</option><option value="repos" ${modeOf(d)==="repos"?"selected":""}>😴 Repos : pas de cartes</option></select></div>`:""}
+      ${modeOf(d)==="libre"&&libre[d]?`<div class="muted" style="font-size:.85rem">Son choix : ${libre[d]==="go"?"elle tire des cartes":"elle se pose"}</div>`:""}
+      ${n>0&&!e?`<div class="addrow"><select data-addday="${d}" aria-label="Ajouter une sortie fixe le ${d}">${optionList(d)}</select></div>`:""}
+    </div>`}).join("");
+}
+
+/* ---------- Espace Joh : Idées ---------- */
+let showMode="all";
+function tagsHTML(a){return `<span class="pill ${W[a.w][0]}">${W[a.w][1]}</span><span class="pill">${T[a.t]}</span><span class="pill${a.p===0?" free":""}">${P[a.p??1]}</span>${a.full?'<span class="pill full">Journée complète</span>':""}${a.res?'<span class="pill res">À réserver</span>':""}${a.from?`<span class="pill">Dès le ${a.from} nov</span>`:""}`}
+function renderIdees(){
+  const pl=Object.values(plan).flat(),gone=drawnKeys();let h="";
+  CATS.forEach(([c,label])=>{
+    let ks=Object.keys(A).filter(k=>A[k].c===c);
+    if(c==="big"){h+=`<div class="cat"><div class="cat-head"><h3>${label}</h3></div><div class="list">${ks.map(k=>{const pd=placedDay(k);return `<div class="it fixed"><span class="box" style="border-color:var(--sun);color:var(--sun)">★</span><span class="n">${esc(A[k].n)}</span><span class="d">${pd?"Placée le "+dayLabel(pd):"Pas placée : ajoute-la dans l'onglet Programme"}</span></div>`}).join("")}</div></div>`;return}
+    ks=ks.filter(k=>!A[k].recur);
+    if(showMode==="on")ks=ks.filter(k=>deckSel.includes(k));
+    if(!ks.length)return;
+    const all=ks.every(k=>deckSel.includes(k));
+    h+=`<div class="cat"><div class="cat-head"><h3>${label}</h3><button type="button" class="link" data-cat="${c}">${all?"Tout retirer":"Tout cocher"}</button></div><div class="list">${ks.map(k=>{const a=A[k],on=deckSel.includes(k);
+      const note=pl.includes(k)?"Placée en sortie fixe le "+dayLabel(placedDay(k)):gone.includes(k)?"Déjà tirée":"";
+      return `<button type="button" class="it ${on?"on":""}" data-k="${k}" aria-pressed="${on}"><span class="box">${on?"✓":""}</span><span class="n">${esc(a.n)}</span><span class="d">${esc(a.d)}${note?` <b>· ${note}</b>`:""}</span><span class="tags">${tagsHTML(a)}</span></button>`}).join("")}</div></div>`});
+  if(own.length)h+=`<div class="cat"><div class="cat-head"><h3>Tes idées</h3></div><div class="list">${own.map(o=>{const on=deckSel.includes(o.id);return `<button type="button" class="it ${on?"on":""}" data-k="${o.id}" aria-pressed="${on}"><span class="box">${on?"✓":""}</span><span class="n">${esc(o.n)}</span><span class="tags"><span class="pill ${W[o.w][0]}">${W[o.w][1]}</span><span class="pill">${T[o.t]}</span></span></button>`}).join("")}</div><div class="actions">${own.map(o=>`<button type="button" class="link" data-del="${o.id}">Supprimer « ${esc(o.n)} »</button>`).join("")}</div></div>`;
+  $("cats").innerHTML=h;
+  $("count").textContent=deckSel.filter(k=>get(k)&&!get(k).big).length;
+  document.querySelectorAll("[data-show]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.show===showMode)));
+}
+
+/* ---------- Espace Joh : À faire ---------- */
+function renderTodo(){
+  const items=[];
+  for(const d in plan)planned(+d).forEach(k=>{const a=get(k);if(a.todo)items.push({id:"p-"+k,day:+d,t:a.todo,n:a.n})});
+  hist.forEach(h=>h.keys.filter(get).forEach(k=>{const a=get(k);if(a.res)items.push({id:"h-"+h.day+"-"+k,day:h.day,t:a.res,n:a.n})}));
+  items.sort((a,b)=>a.day-b.day);
+  $("todo").innerHTML=items.length?items.map(it=>{const ok=!!todoOk[it.id];return `<label class="task ${ok?"ok":""}"><input type="checkbox" data-todo="${it.id}" ${ok?"checked":""}><span><span class="w">${dayLabel(it.day)} · ${esc(it.n)}</span><br><span class="t">${esc(it.t).replace(/(\d\d \d\d \d\d \d\d \d\d)/,'<span class="tel">$1</span>')}</span></span></label>`}).join(""):`<p class="muted">Rien à faire pour l'instant.</p>`;
+}
+
+/* ---------- Navigation ---------- */
+let view="chloe",tab="prog";const PIN="0496";
+function showView(){$("v-chloe").hidden=view!=="chloe";$("v-joh").hidden=view!=="joh"}
+function showTab(){["prog","idees","todo"].forEach(t=>{$("t-"+t).hidden=t!==tab});document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===tab)))}
+function renderSim(){const S=$("simsel"),v=S.value;S.innerHTML=DAYS.map(d=>`<option value="${d}">${dayLabel(d)}</option>`).join("");S.value=v||"7"}
+function render(){renderChloe();renderProg();renderIdees();renderTodo();renderSim();scheduleNotifs()}
+/* ---------- Notifications (appli Android uniquement) ---------- */
+function notifPlan(){
+  const out=[];
+  for(let d=7;d<=29;d++){
+    const ms=[...carried(d),...planned(d)],n=need(d),m=modeOf(d),fri=new Date(2026,10,d).getDay()===5;
+    let body=null,h=10,mi=0;
+    if(d===7){body="Bienvenue ! Ton appli de novembre est prête 💛";h=15}
+    else if(!DAYS.includes(d))continue;
+    else if(m==="repos"){if(NEMSDAYS.includes(d)){body="🥢 Petit tour au marché ce matin pour les nems ?";h=9;mi=30}}
+    else if(m==="libre"&&n>0)body=ms.length?"✨ Une surprise t'attend aujourd'hui… et des cartes si tu veux !":"Envie d'une sortie aujourd'hui ? C'est toi qui décides 🃏";
+    else if(ms.length&&n>0)body="✨ Une surprise t'attend aujourd'hui, et 1 carte à tirer !";
+    else if(ms.length)body="✨ Une surprise t'attend aujourd'hui, ouvre ton appli !";
+    else if(n>0)body="🃏 Tes cartes du jour t'attendent !";
+    if(body&&m!=="repos"&&NEMSDAYS.includes(d)){body+=" Et petit tour au marché pour les nems 🥢";h=9;mi=30}
+    if(fri&&d!==7){h=17;mi=30}
+    if(body)out.push({id:d,title:"Novembre à deux",body,at:new Date(2026,10,d,h,mi)});
+  }
+  return out;
+}
+let notifTimer=null,notifAsked=false;
+function scheduleNotifs(){
+  const LN=window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform()&&window.Capacitor.Plugins&&window.Capacitor.Plugins.LocalNotifications;
+  if(!LN)return;
+  clearTimeout(notifTimer);
+  notifTimer=setTimeout(async()=>{try{
+    let p=await LN.checkPermissions();
+    if(p.display!=="granted"&&!notifAsked){notifAsked=true;p=await LN.requestPermissions()}
+    if(p.display!=="granted")return;
+    const pend=await LN.getPending();
+    if(pend.notifications&&pend.notifications.length)await LN.cancel({notifications:pend.notifications.map(n=>({id:n.id}))});
+    const now=Date.now(),list=notifPlan().filter(n=>n.at.getTime()>now+60000);
+    if(list.length)await LN.schedule({notifications:list.map(n=>({id:n.id,title:n.title,body:n.body,schedule:{at:n.at,allowWhileIdle:true}}))});
+  }catch(err){console.warn("notifs",err)}},400);
+}
+
+document.addEventListener("click",e=>{
+  const t=e.target;
+  if(t.closest("#toJoh")){$("pinbox").hidden=false;$("pinerr").hidden=true;$("pin").value="";setTimeout(()=>$("pin").focus(),50);return}
+  if(t.closest("#pincancel")){$("pinbox").hidden=true;return}
+  if(t.closest("#backChloe")){view="chloe";simDay=null;cur=null;showView();renderChloe();window.scrollTo(0,0);return}
+  if(t.closest("#simgo")){simDay=+$("simsel").value;cur=null;view="chloe";showView();renderChloe();window.scrollTo(0,0);return}
+  if(t.closest("#simoff")){simDay=null;cur=null;renderChloe();return}
+  const tb=t.closest("[data-tab]");if(tb){tab=tb.dataset.tab;showTab();return}
+  const w=t.closest("[data-wx]");if(w){wx=w.dataset.wx;cur=null;renderChloe();return}
+  const m=t.closest("[data-tm]");if(m){tm=m.dataset.tm;cur=null;renderChloe();return}
+  const sm=t.closest("[data-show]");if(sm){showMode=sm.dataset.show;renderIdees();return}
+  const rm=t.closest("[data-rm]");if(rm){const [d,k]=rm.dataset.rm.split("|");plan[d]=(plan[d]||[]).filter(x=>x!==k);save();render();return}
+  const ud=t.closest("[data-undo]");if(ud){hist=hist.filter(h=>h.day!==+ud.dataset.undo);delete libre[ud.dataset.undo];save();render();return}
+  const it=t.closest(".it[data-k]");if(it){const k=it.dataset.k;deckSel=deckSel.includes(k)?deckSel.filter(x=>x!==k):[...deckSel,k];save();renderIdees();renderChloe();return}
+  const ca=t.closest("[data-cat]");if(ca){const ks=Object.keys(A).filter(k=>A[k].c===ca.dataset.cat);const all=ks.every(k=>deckSel.includes(k));deckSel=all?deckSel.filter(k=>!ks.includes(k)):[...new Set([...deckSel,...ks])];save();renderIdees();return}
+  const dl=t.closest("[data-del]");if(dl){const id=dl.dataset.del;own=own.filter(o=>o.id!==id);deckSel=deckSel.filter(k=>k!==id);for(const d in plan)plan[d]=plan[d].filter(k=>k!==id);save();render();return}
+});
+document.addEventListener("change",e=>{
+  const md=e.target.closest("[data-mode]");if(md){mode[md.dataset.mode]=md.value;delete libre[md.dataset.mode];cur=null;save();render();return}
+  const s=e.target.closest("[data-addday]");if(s&&s.value){const d=s.dataset.addday,k=s.value;for(const x in plan)plan[x]=(plan[x]||[]).filter(y=>y!==k);plan[d]=[...(plan[d]||[]),k];hist=hist.filter(h=>h.day!==+d);save();render();return}
+  const td=e.target.closest("[data-todo]");if(td){todoOk[td.dataset.todo]=td.checked;save();renderTodo();return}
+});
+$("pinform").addEventListener("submit",e=>{e.preventDefault();if($("pin").value===PIN){$("pinbox").hidden=true;$("pin").value="";view="joh";showView();render();window.scrollTo(0,0)}else{$("pinerr").hidden=false;$("pin").value=""}});
+$("addf").addEventListener("submit",e=>{e.preventDefault();const n=$("addn").value.trim();if(!n)return;const id="own"+Date.now();own.push({id,n,w:$("addw").value,t:$("addt").value});deckSel.push(id);$("addn").value="";save();render()});
+const R=$("reset"),Y=$("resetYes"),N=$("resetNo");
+R.onclick=()=>{R.hidden=true;Y.hidden=false;N.hidden=false};
+N.onclick=()=>{R.hidden=false;Y.hidden=true;N.hidden=true};
+Y.onclick=()=>{plan=JSON.parse(JSON.stringify(DEFPLAN));deckSel=Object.keys(A).filter(k=>!A[k].big);hist=[];todoOk={};mode={};libre={};cur=null;save();N.onclick();render()};
+
+showView();showTab();render();
+</script>
+
+</body>
+</html>

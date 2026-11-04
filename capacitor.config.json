@@ -1,0 +1,14 @@
+{
+  "appId": "fr.joh.novembrechloe",
+  "appName": "Novembre à deux",
+  "webDir": "www",
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_notify",
+      "iconColor": "#1f5f7a"
+    }
+  },
+  "android": {
+    "backgroundColor": "#eef2f3"
+  }
+}
