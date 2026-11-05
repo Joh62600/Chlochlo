@@ -24,7 +24,7 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - uses: android-actions/setup-android@v3
+      # Le SDK Android est déjà installé sur les runners GitHub (ANDROID_HOME).
 
       - name: Installer les dépendances
         run: npm ci
