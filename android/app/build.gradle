@@ -7,7 +7,7 @@ android {
         applicationId "fr.joh.novembrechloe"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+        versionCode (System.getenv("GITHUB_RUN_NUMBER") ?: "1").toInteger()
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
@@ -16,7 +16,19 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    // Clé fixe : chaque nouvelle version s'installe par-dessus l'ancienne sans conflit
+    signingConfigs {
+        fixe {
+            storeFile file('novembre.keystore')
+            storePassword 'novembre2026'
+            keyAlias 'novembre'
+            keyPassword 'novembre2026'
+        }
+    }
     buildTypes {
+        debug {
+            signingConfig signingConfigs.fixe
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
