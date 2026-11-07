@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<title>Novembre avec Chloé</title>
+<title>Nounou</title>
 <style>
 @font-face{font-family:"Young Serif";src:url(fonts/young-serif-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
 @font-face{font-family:"Figtree";src:url(fonts/figtree-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
@@ -24,17 +24,18 @@ img{max-width:100%}
 :root{
   --bg:#eef2f3; --surface:#ffffff; --fg:#1d2b33; --muted:#5d6f78; --line:#d5dfe3;
   --sea:#1f5f7a; --sea-soft:#dcebf1; --sun:#b97d0c; --sun-soft:#fbefd2; --rain:#4f6a84; --rain-soft:#e2e9f0;
-  --ok:#2f7d4f; --ok-soft:#dcefe3;
+  --ok:#2f7d4f; --ok-soft:#dcefe3; --eye:#7fa63a;
+  --shadow:0 8px 22px -10px color-mix(in srgb,var(--fg) 45%,transparent);
   --display:"Young Serif", Georgia, serif; --body:"Figtree", system-ui, sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#10181d; --surface:#18232a; --fg:#e6eef1; --muted:#97a9b2; --line:#2a3a43;
   --sea:#6cb6d4; --sea-soft:#17323e; --sun:#e8b44a; --sun-soft:#3a2e14; --rain:#9cb4cb; --rain-soft:#212e3a;
-  --ok:#6cc690; --ok-soft:#173326; color-scheme:dark}}
+  --ok:#6cc690; --ok-soft:#173326; --eye:#a9cf5e; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#10181d; --surface:#18232a; --fg:#e6eef1; --muted:#97a9b2; --line:#2a3a43;
   --sea:#6cb6d4; --sea-soft:#17323e; --sun:#e8b44a; --sun-soft:#3a2e14; --rain:#9cb4cb; --rain-soft:#212e3a;
-  --ok:#6cc690; --ok-soft:#173326; color-scheme:dark}
+  --ok:#6cc690; --ok-soft:#173326; --eye:#a9cf5e; color-scheme:dark}
 [hidden]{display:none!important}
 .pinbox{position:fixed;inset:0;z-index:50;background:color-mix(in srgb,var(--bg) 92%,transparent);display:grid;place-items:center;padding:16px max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px))}
 .pinbox .panel{width:min(340px,100%)}
@@ -63,6 +64,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .tabs button{border:0;text-align:center;border-radius:9px;padding:9px 6px}
 .tabs button[aria-selected="true"]{background:var(--sea);color:var(--surface)}
 .actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+textarea{font:inherit;font-size:.8rem;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;width:100%;box-sizing:border-box;resize:vertical;word-break:break-all}
 select,input[type=text]{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-width:0;max-width:100%}
 .pill{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap;background:var(--bg);color:var(--muted)}
 .pill.sun{background:var(--sun-soft);color:var(--sun)}
@@ -75,34 +77,39 @@ select,input[type=text]{font:inherit;color:var(--fg);background:var(--bg);border
 
 /* Chloé */
 .table-head{text-align:center;display:flex;flex-direction:column;align-items:center}
-.table-head h1{font-size:2.5rem}
+.table-head{padding-block:10px 4px;gap:4px}
+.table-head h1{font-size:clamp(2.2rem,9vw,3rem);letter-spacing:-.01em}
+.table-head .label{color:var(--sea);letter-spacing:.14em}
+.table-head .sub{max-width:34ch}
 .agenda{display:flex;flex-direction:column;gap:8px}
-.ag{padding:16px;border-radius:14px;background:var(--sun-soft);border:2px solid var(--sun);display:flex;flex-direction:column;gap:4px;text-align:center}
+.ag{padding:18px 16px;border-radius:18px;box-shadow:var(--shadow);background:var(--sun-soft);border:2px solid var(--sun);display:flex;flex-direction:column;gap:4px;text-align:center}
 .ag b{font-family:var(--display);font-weight:400;font-size:1.35rem;text-wrap:balance}
 .ag span{color:var(--muted)}
 .ag.bonus{background:var(--ok-soft);border-color:var(--ok)}
 .ag.bonus b{font-size:1.1rem}
 .filters{display:flex;flex-direction:column;gap:8px;align-items:center}
 .filters .seg{justify-content:center}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:14px;padding:4px}
 .card{all:unset;cursor:pointer;perspective:800px;aspect-ratio:2/3;display:block;max-width:100%}
 .card:focus-visible{outline:2px solid var(--sun);outline-offset:3px;border-radius:12px}
 .card .in{position:relative;display:block;width:100%;height:100%;transition:transform .6s ease;transform-style:preserve-3d}
 .card.flip .in{transform:rotateY(180deg)}
 .card:not(.flip):hover .in{transform:translateY(-4px)}
-.face{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;padding:8px;text-align:center;box-sizing:border-box}
+.face{position:absolute;inset:0;border-radius:16px;box-shadow:var(--shadow);backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;padding:8px;text-align:center;box-sizing:border-box}
 .back{background:repeating-linear-gradient(45deg,var(--sea) 0 8px,color-mix(in srgb,var(--sea) 82%,var(--surface)) 8px 16px);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--sea);color:var(--surface)}
 .back b{font-family:var(--display);font-weight:400;font-size:2rem;background:var(--sea);width:2.4rem;height:2.4rem;border-radius:50%;display:grid;place-items:center}
-.front{transform:rotateY(180deg);background:var(--sun-soft);border:2px solid var(--sun);color:var(--fg)}
-.front .fn{font-weight:700;font-size:.92rem;line-height:1.2;overflow-wrap:anywhere}
+.front{transform:rotateY(180deg);background:linear-gradient(180deg,var(--surface),var(--sun-soft));border:2px solid var(--sun);color:var(--fg);justify-content:space-between;padding:12px 8px}
+.front .emo{font-size:2rem;line-height:1;margin-top:4px}
+.front .fn{font-family:var(--display);font-weight:400;font-size:.98rem;line-height:1.15;overflow-wrap:anywhere;text-wrap:balance}
 .cards.full .card:not(.flip){opacity:.3;cursor:default}
 .cards.choosing .card:not(.flip){display:none}
-.card.pick .front{border-color:var(--ok);background:var(--ok-soft);box-shadow:0 0 0 3px var(--ok)}
-.card.pick .front::after{content:"✓";position:absolute;top:6px;right:8px;font-weight:700;color:var(--ok)}
+.card.pick .front{border-color:var(--eye);background:linear-gradient(180deg,var(--surface),var(--ok-soft));box-shadow:0 0 0 3px var(--eye),var(--shadow)}
+.card.pick .front::after{content:"✓";position:absolute;top:6px;right:9px;font-weight:700;color:var(--eye);font-size:1.1rem}
 .card.out{opacity:.1;pointer-events:none;transform:scale(.92);transition:opacity .4s,transform .4s}
 .dmsg{margin:0;color:var(--muted);text-align:center}
 .res{display:flex;flex-direction:column;gap:8px}
-.res div{padding:10px 12px;border-radius:10px;background:var(--ok-soft);border:1px solid var(--ok)}
+.res div{padding:14px 16px;border-radius:16px;background:var(--surface);border:2px solid var(--eye);box-shadow:var(--shadow)}
+.res b{font-family:var(--display);font-weight:400;font-size:1.15rem}
 .res span{color:var(--muted);font-size:.88rem}
 .sim{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:8px 12px;border-radius:10px;background:var(--rain-soft);color:var(--rain);font-weight:600;font-size:.88rem}
 .ghost{all:unset;cursor:pointer;align-self:center;color:var(--muted);opacity:.45;font-size:1.1rem;padding:6px 10px;border-radius:8px}
@@ -172,7 +179,7 @@ select,input[type=text]{font:inherit;color:var(--fg);background:var(--bg);border
   <div class="view" id="v-chloe">
     <div class="sim" id="sim" hidden><span id="simtxt"></span><button type="button" class="btn small" id="simoff">Revenir à aujourd'hui</button></div>
     <header class="table-head">
-      <div class="label" id="tdate">Novembre à deux</div>
+      <div class="label" id="tdate">Nounou</div>
       <h1 id="ttitle">Tire 2 cartes</h1>
       <p class="sub" id="tsub"></p>
     </header>
@@ -198,8 +205,8 @@ select,input[type=text]{font:inherit;color:var(--fg);background:var(--bg);border
   <div class="view" id="v-joh" hidden>
     <header>
       <button type="button" class="btn small" id="backChloe" style="margin-bottom:10px">← Retour à l'appli de Chloé</button>
-      <div class="label">Espace Joh · surprise du 7 au 29 novembre</div>
-      <h1>Novembre avec Chloé</h1>
+      <div class="label">Espace Joh · novembre avec Chloé, du 7 au 29</div>
+      <h1>Nounou</h1>
       <p class="sub">Chloé ne voit que le jour même. Ici tu prépares tout : le programme jour par jour, les idées du jeu de cartes, et ce qu'il reste à réserver.</p>
       <div class="actions" style="margin-top:10px">
         <select id="simsel" aria-label="Jour à prévisualiser"></select>
@@ -236,6 +243,14 @@ select,input[type=text]{font:inherit;color:var(--fg);background:var(--bg);border
     <section id="t-todo" class="view" hidden>
       <p class="muted" style="margin:0">La liste se remplit toute seule avec les sorties fixes et ce que Chloé tire. Coche au fur et à mesure.</p>
       <div class="todo" id="todo"></div>
+      <div class="panel">
+        <h3>Transférer tes réglages</h3>
+        <p class="muted" style="margin:0">Pour passer tes idées cochées, tes idées perso et ton programme d'un téléphone à l'autre : copie le code ici, puis colle-le dans l'autre appli.</p>
+        <textarea id="exp" readonly rows="3" aria-label="Code de tes réglages"></textarea>
+        <div class="actions"><button class="btn" id="expcopy" type="button">Copier le code</button></div>
+        <textarea id="imp" rows="3" aria-label="Coller un code" placeholder="Colle ici un code venant de l'autre téléphone"></textarea>
+        <div class="actions"><button class="btn main" id="impgo" type="button">Importer</button><span class="muted" id="impmsg"></span></div>
+      </div>
       <div class="panel">
         <h3>Tout recommencer</h3>
         <p class="muted" style="margin:0">Remet le programme par défaut, toutes les idées dans le jeu, et efface les tirages.</p>
@@ -314,6 +329,7 @@ const A={
  cocktails:{c:"resto",n:"Bar à cocktails au Touquet",d:"Apéro chic en centre-ville.",w:"any",t:"soir",z:"touquet",p:1},
  gastro:{c:"resto",n:"Dîner chic au Touquet",d:"Un vrai resto gastronomique.",w:"any",t:"soir",z:"touquet",p:2,res:"Réserver quelques jours avant"},
 
+ bad:{c:"fun",n:"Faire du bad",d:"Une partie de badminton en salle : louer un terrain dans un gymnase ou un club du coin, raquettes et volants.",w:"any",t:"both",z:"berck",p:1,res:"Réserver un terrain de badminton"},
  karting:{c:"fun",n:"Karting à Berck",d:"Ducas Racing Kart, sans réservation, même sous la pluie.",w:"any",t:"jour",z:"berck",p:1},
  laserout:{c:"fun",n:"Laser game en extérieur",d:"Outdoor Laser Game Opal à Rang-du-Fliers.",w:"sun",t:"jour",z:"berck",p:1,res:"Appeler le 06 62 20 97 07"},
  bowling:{c:"fun",n:"Bowling + laser game",d:"Opal Bowling au Portel.",w:"rain",t:"both",z:"boulogne",p:1},
@@ -332,6 +348,9 @@ const A={
  jeux:{c:"pluie",n:"Soirée jeux de société",d:"Tranquille, à deux ou avec tes parents.",w:"rain",t:"soir",z:"flex",p:0},
  crepes:{c:"pluie",n:"Crêpes maison",d:"Salées puis sucrées.",w:"rain",t:"soir",z:"flex",p:0}
 };
+const EMO={big:"⭐",nature:"🌊",ville:"🏛️",resto:"🍽️",fun:"🎉",pluie:"☔",own:"💡"};
+const EMO_K={bad:"🏸",nems:"🥢",moules:"🦪",oceane:"🦪",crotoy:"🦪",karting:"🏎️",cine:"🍿",resident:"🍿",phoques:"🦭",hourdel:"🦭",cheval:"🐴",bowling:"🎳",laserquest:"🎯",laserout:"🎯",chinois:"🥡",pizza:"🍕",creperie:"🥞",crepes:"🥞",coucher:"🌅",etoiles:"✨",petitdej:"🥐",cervolant:"🪁",shopping:"🛍️",musee:"🖼️",museetouquet:"🖼️",louvrelens:"🖼️",lille:"🧇",bruges:"🍫",arras:"🏰",rouen:"⛪",cathedrale:"⛪",etretat:"🪨",dunkerque:"🏖️",noelamiens:"🎄",noelmer:"🎄",spectacle:"🎭",casino:"🎰",cocktails:"🍸",escape:"🔐",fruitsdemer:"🦞",welsh:"🧀",friterie:"🍟",sushi:"🍣",burger:"🍔",brunch:"🥞",salondethe:"🫖",gastro:"🥂",poissons:"🐟",nausicaa:"🦈",piccolino:"🍝",stvalery:"🌾",c_caps:"🌊",arrivee:"💛",escapade:"🛁",charvoile:"⛵",pecheapied:"🪣",barjeux:"🎲",jeux:"🎲",atelier:"🎨",losc:"⚽",brocante:"🧺",shooting:"📸",dunes:"🏜️",abbeville:"⛪",asian:"🥢",marchetouquet:"🧺",mareis:"🐟",coupole:"🔭"};
+function emo(k){const a=get(k);return EMO_K[k]||(a&&EMO[a.c])||"✨"}
 const W={sun:["sun","Beau temps"],rain:["rain","Pluie OK"],any:["any","Peu importe"]};
 const T={jour:"Journée",soir:"Soirée",both:"Jour ou soir"};
 const P=["Gratuit / petit prix","€","€€"];
@@ -368,6 +387,7 @@ if(!Array.isArray(own)){const o=loadOld("-own");own=Array.isArray(o)?o:[]}
 if(!plan||typeof plan!=="object")plan=JSON.parse(JSON.stringify(DEFPLAN));
 if(!Array.isArray(hist)){const h=loadOld("-hist");hist=Array.isArray(h)?h.filter(x=>x&&x.day&&Array.isArray(x.keys)&&DAYS.includes(x.day)).map(x=>({day:x.day,keys:x.keys})):[]}
 if(!todoOk||typeof todoOk!=="object")todoOk={};
+if(!load("-bad1",false)){if(!deckSel.includes("bad"))deckSel.push("bad");try{localStorage.setItem(KEY+"-bad1","true")}catch(e){}}
 let mode=load("-mode",{}),libre=load("-libre",{});
 if(!mode||typeof mode!=="object")mode={};if(!libre||typeof libre!=="object")libre={};
 function modeOf(d){return mode[d]||DEFMODE[d]||"cartes"}
@@ -411,7 +431,7 @@ function deck(d){const fx=planned(d),n=need(d),work=isWork(d),gone=drawnKeys(),p
     if(fx.some(m=>{const b=get(m);return (b.t!=="both"&&a.t===b.t&&EAT.has(k)===EAT.has(m))||(EAT.has(k)&&EAT.has(m))||!cz(a.z,a.t,b.z,b.t)}))return false;
     return true})}
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function cardHTML(k,flipped,i){const a=get(k);return `<button type="button" class="card ${flipped?"flip":""}" ${i!=null?`data-i="${i}"`:""} aria-label="${flipped?esc(a.n):"Carte face cachée"}"><span class="in"><span class="face back"><b>?</b></span><span class="face front">${a.full?'<span class="pill full">Journée complète</span>':`<span class="pill ${W[a.w][0]}">${W[a.w][1]}</span>`}<span class="fn">${esc(a.n)}</span></span></span></button>`}
+function cardHTML(k,flipped,i){const a=get(k);return `<button type="button" class="card ${flipped?"flip":""}" ${i!=null?`data-i="${i}"`:""} aria-label="${flipped?esc(a.n):"Carte face cachée"}"><span class="in"><span class="face back"><b>?</b></span><span class="face front"><span class="emo" aria-hidden="true">${emo(k)}</span>${a.full?'<span class="pill full">Journée complète</span>':`<span class="pill ${W[a.w][0]}">${W[a.w][1]}</span>`}<span class="fn">${esc(a.n)}</span></span></span></button>`}
 
 const $=id=>document.getElementById(id);
 const CARDS=$("cards"),MSG=$("dmsg"),RES=$("dres"),UN=$("undo");
@@ -420,15 +440,15 @@ function renderChloe(){
   $("sim").hidden=simDay==null;$("simtxt").textContent=simDay!=null?"Aperçu : comme si on était le "+dayLabel(simDay):"";
   const TD=$("tdate"),TT=$("ttitle"),TS=$("tsub"),AGD=$("agenda"),DZ=$("drawzone");
   AGD.hidden=true;DZ.hidden=true;$("libre").hidden=true;UN.hidden=true;$("confirm").hidden=true;$("swap").hidden=true;RES.innerHTML="";MSG.textContent="";CARDS.innerHTML="";CARDS.classList.remove("full","choosing");
-  if(dday<7){TD.textContent="Novembre à deux";TT.textContent="Rendez-vous le 7 novembre";TS.textContent="Les cartes s'ouvriront ce jour-là. Patience 😉";return}
-  if(dday>29){TD.textContent="Novembre à deux";TT.textContent="C'était un super mois";TS.textContent="Merci d'être venue ❤";return}
-  TD.textContent="Aujourd'hui · "+dayLabel(dday);
+  if(dday<7){TD.textContent="Nounou";TT.textContent="Rendez-vous le 7 novembre";TS.textContent="Les cartes s'ouvriront ce jour-là. Patience 😉";return}
+  if(dday>29){TD.textContent="Nounou";TT.textContent="C'était un super mois";TS.textContent="Merci d'être venue ❤";return}
+  TD.textContent="Nounou · "+dayLabel(dday);
   const ms=[...carried(dday),...planned(dday)],e=entryOn(dday),n=need(dday),work=isWork(dday);
   const bonus=NEMSDAYS.includes(dday)?(dday===8?`<div class="ag bonus"><b>🥢 Nems au marché</b><span>Ce matin, petit tour au marché de Berck, place Wilquin, pour prendre des nems.</span></div>`:`<div class="ag bonus"><b>🥢 Bonus du samedi matin</b><span>Petit tour au marché couvert de Berck pour prendre des nems avant de partir.</span></div>`):"";
   if(ms.length||bonus){AGD.hidden=false;AGD.innerHTML=`<div class="label" style="text-align:center">Au programme</div>`+ms.map(k=>`<div class="ag"><b>${esc(mustName(k,dday))}</b><span>${esc(mustDesc(k,dday))}</span></div>`).join("")+bonus}
   if(e){const ks=e.keys.filter(get);TT.textContent=ks.length>1?"Tes 2 cartes du jour":"Ta carte du jour";TS.textContent="C'est prévu, bonne sortie !";
     DZ.hidden=false;$("filt").hidden=true;CARDS.innerHTML=ks.map(k=>cardHTML(k,true)).join("");
-    RES.innerHTML=ks.map(k=>{const a=get(k);return `<div><b>${esc(a.n)}</b><br><span>${esc(a.d)}</span></div>`}).join("");UN.hidden=false;return}
+    RES.innerHTML=ks.map(k=>{const a=get(k);return `<div><b>${emo(k)} ${esc(a.n)}</b><br><span>${esc(a.d)}</span></div>`}).join("");UN.hidden=false;return}
   if(DAYS.includes(dday)&&modeOf(dday)==="repos"){TT.textContent=dday===7?"Bienvenue !":ms.length?"Au programme aujourd'hui":"Journée tranquille";TS.textContent=dday===7?"Ce week-end, on se pose. Les surprises commencent bientôt 😉":bonus&&!ms.length?"On se pose, juste un petit tour au marché pour les nems.":"Pas de cartes aujourd'hui, on se pose.";return}
   if(n>0&&modeOf(dday)==="libre"&&libre[dday]!=="go"){
     $("libre").hidden=false;
@@ -551,7 +571,8 @@ let view="chloe",tab="prog";const PIN="0496";
 function showView(){$("v-chloe").hidden=view!=="chloe";$("v-joh").hidden=view!=="joh"}
 function showTab(){["prog","idees","todo"].forEach(t=>{$("t-"+t).hidden=t!==tab});document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===tab)))}
 function renderSim(){const S=$("simsel"),v=S.value;S.innerHTML=DAYS.map(d=>`<option value="${d}">${dayLabel(d)}</option>`).join("");S.value=v||"7"}
-function render(){renderChloe();renderProg();renderIdees();renderTodo();renderSim();scheduleNotifs()}
+function exportCode(){try{return btoa(unescape(encodeURIComponent(JSON.stringify({v:1,deck:deckSel,own,plan,mode}))))}catch(e){return""}}
+function render(){renderChloe();renderProg();renderIdees();renderTodo();renderSim();scheduleNotifs();const X=document.getElementById("exp");if(X)X.value=exportCode()}
 /* ---------- Notifications (appli Android uniquement) ---------- */
 function notifPlan(){
   const out=[];
@@ -567,7 +588,7 @@ function notifPlan(){
     else if(n>0)body="🃏 Tes cartes du jour t'attendent !";
     if(body&&m!=="repos"&&NEMSDAYS.includes(d)){body+=" Et petit tour au marché pour les nems 🥢";h=9;mi=30}
     if(fri&&d!==7){h=17;mi=30}
-    if(body)out.push({id:d,title:"Novembre à deux",body,at:new Date(2026,10,d,h,mi)});
+    if(body)out.push({id:d,title:"Nounou",body,at:new Date(2026,10,d,h,mi)});
   }
   return out;
 }
@@ -609,6 +630,8 @@ document.addEventListener("change",e=>{
   const s=e.target.closest("[data-addday]");if(s&&s.value){const d=s.dataset.addday,k=s.value;for(const x in plan)plan[x]=(plan[x]||[]).filter(y=>y!==k);plan[d]=[...(plan[d]||[]),k];hist=hist.filter(h=>h.day!==+d);save();render();return}
   const td=e.target.closest("[data-todo]");if(td){todoOk[td.dataset.todo]=td.checked;save();renderTodo();return}
 });
+$("expcopy").addEventListener("click",async()=>{const X=$("exp");try{await navigator.clipboard.writeText(X.value);$("expcopy").textContent="Copié ✓"}catch(e){X.focus();X.select();$("expcopy").textContent="Sélectionné : fais Copier"}setTimeout(()=>{$("expcopy").textContent="Copier le code"},2500)});
+$("impgo").addEventListener("click",()=>{const M=$("impmsg");try{const o=JSON.parse(decodeURIComponent(escape(atob($("imp").value.trim()))));if(!o||!Array.isArray(o.deck))throw 0;deckSel=o.deck;own=Array.isArray(o.own)?o.own:own;if(o.plan&&typeof o.plan==="object")plan=o.plan;if(o.mode&&typeof o.mode==="object")mode=o.mode;cur=null;save();render();$("imp").value="";M.textContent="Réglages importés ✓"}catch(e){M.textContent="Code invalide, recopie-le en entier."}});
 $("pinform").addEventListener("submit",e=>{e.preventDefault();if($("pin").value===PIN){$("pinbox").hidden=true;$("pin").value="";view="joh";showView();render();window.scrollTo(0,0)}else{$("pinerr").hidden=false;$("pin").value=""}});
 $("addf").addEventListener("submit",e=>{e.preventDefault();const n=$("addn").value.trim();if(!n)return;const id="own"+Date.now();own.push({id,n,w:$("addw").value,t:$("addt").value});deckSel.push(id);$("addn").value="";save();render()});
 const R=$("reset"),Y=$("resetYes"),N=$("resetNo");

@@ -1,6 +1,6 @@
 {
   "appId": "fr.joh.novembrechloe",
-  "appName": "Novembre à deux",
+  "appName": "Nounou",
   "webDir": "www",
   "plugins": {
     "LocalNotifications": {

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Novembre à deux</string>
-    <string name="title_activity_main">Novembre à deux</string>
+    <string name="app_name">Nounou</string>
+    <string name="title_activity_main">Nounou</string>
     <string name="package_name">fr.joh.novembrechloe</string>
     <string name="custom_url_scheme">fr.joh.novembrechloe</string>
 </resources>
